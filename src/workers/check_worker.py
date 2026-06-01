@@ -749,6 +749,10 @@ class SSLChecker:
 class CheckRunner:
     """Dispatches checks based on monitor type."""
 
+    async def execute(self, monitor: Monitor) -> CheckResult:
+        """Alias for check() — used by scheduler."""
+        return await self.check(monitor)
+
     def __init__(self):
         self.checkers = {
             MonitorType.HTTP: HTTPChecker(),

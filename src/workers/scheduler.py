@@ -106,16 +106,16 @@ class MonitorScheduler:
                 is_up=result.is_up,
                 response_time_ms=result.response_time_ms,
                 status_code=result.status_code,
-                error_message=result.error_message,
-                dns_ms=result.dns_resolution_ms,
-                tls_ms=result.tls_handshake_ms,
-                ttfb_ms=result.ttfb_ms,
-                content_length=result.content_length,
+                error_message=result.error,
+                dns_ms=result.timing.dns_ms if result.timing else None,
+                tls_ms=result.timing.tls_ms if result.timing else None,
+                ttfb_ms=result.timing.ttfb_ms if result.timing else None,
+                content_length=result.body_size_bytes,
             )
 
             # Process alerts
             if not result.is_up:
-                logger.warning(f"Monitor {monitor.name} is DOWN: {result.error_message}")
+                logger.warning(f"Monitor {monitor.name} is DOWN: {result.error}")
                 await AlertService.process_down_alert(session, monitor, check)
             else:
                 await AlertService.process_recovery_alert(session, monitor, check)
